@@ -3,11 +3,16 @@ from datetime import datetime, timezone
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ASCENDING, DESCENDING, TEXT, IndexModel
+import certifi
 
 from core.config import DB_NAME, MONGO_URL
 
-client = AsyncIOMotorClient(MONGO_URL)
-db = client[DB_NAME]
+client_kwargs = {}
+if "mongodb+srv://" in MONGO_URL or "ssl=true" in MONGO_URL.lower() or "tls=true" in MONGO_URL.lower():
+    client_kwargs["tlsCAFile"] = certifi.where()
+
+client = AsyncIOMotorClient(MONGO_URL, **client_kwargs) if MONGO_URL else None
+db = client[DB_NAME] if client is not None else None
 
 INDEXES: dict[str, list[IndexModel]] = {
     "workspaces": [IndexModel([("id", ASCENDING)], unique=True, name="id"),
@@ -33,6 +38,8 @@ INDEXES: dict[str, list[IndexModel]] = {
 
 
 async def ensure_indexes() -> None:
+    if db is None:
+        return
     for collection, models in INDEXES.items():
         for model in models:
             try:

@@ -62,9 +62,13 @@ else:
 async def startup():
     app.state.index_task = asyncio.create_task(ensure_indexes())
     # Jobs interrupted by a restart are marked failed so they are never shown as ready.
-    await db.documents.update_many({"status": {"$in": ["queued", "processing"]}},
-                                   {"$set": {"status": "failed", "stage": "failed", "progress": 0, "updated_at": now_iso(),
-                                             "error": "Processing was interrupted by a server restart. Please re-index."}})
+    if db is not None:
+        try:
+            await db.documents.update_many({"status": {"$in": ["queued", "processing"]}},
+                                           {"$set": {"status": "failed", "stage": "failed", "progress": 0, "updated_at": now_iso(),
+                                                     "error": "Processing was interrupted by a server restart. Please re-index."}})
+        except Exception as exc:
+            logger.error("Startup DB cleanup failed: %s", exc)
     try:
         await asyncio.to_thread(init_storage)
     except Exception as exc:
@@ -73,7 +77,9 @@ async def startup():
 
 @app.on_event("shutdown")
 async def shutdown():
-    app.state.index_task.cancel()
-    with suppress(asyncio.CancelledError):
-        await app.state.index_task
-    client.close()
+    if hasattr(app.state, "index_task") and app.state.index_task:
+        app.state.index_task.cancel()
+        with suppress(asyncio.CancelledError):
+            await app.state.index_task
+    if client is not None:
+        client.close()
