@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import { Database, Search as SearchIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -14,7 +16,7 @@ import { errMsg, useApi, useFetch } from "@/lib/api";
 
 export default function KnowledgeBase() {
   const api = useApi();
-  const [params] = useSearchParams();
+  const searchParams = useSearchParams();
   const { workspace, reloadDocuments } = useWorkspace();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
@@ -42,7 +44,7 @@ export default function KnowledgeBase() {
       <PageHeader eyebrow="Knowledge Base" title="Documents"
         description="Upload PDFs to extract page-aware text, split it into overlapping chunks and index 1,536-dimension embeddings. Processing runs in the background."
         actions={<span className="font-mono text-xs text-slate-500" data-testid="kb-totals">{list.length} docs · {totals.indexed} indexed · {totals.chunks} chunks</span>} />
-      <UploadDropzone maxMb={workspace?.system?.max_upload_mb || 20} onUploaded={refresh} autoOpen={params.get("upload") === "1"} />
+      <UploadDropzone maxMb={workspace?.system?.max_upload_mb || 20} onUploaded={refresh} autoOpen={searchParams?.get("upload") === "1"} />
       {workspace?.system && !workspace.system.embeddings_configured && (
         <ErrorState message="Embeddings are not configured (OPENAI_API_KEY missing on the server). Uploads will be stored but indexing will fail until a key is added." />
       )}

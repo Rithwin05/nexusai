@@ -1,3 +1,5 @@
+"use client";
+
 import { Activity, AlertTriangle, Boxes, Coins, FileText, MessageSquareText, ThumbsUp, Timer } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";

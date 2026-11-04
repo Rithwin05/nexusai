@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BarChart3, Database, FileSearch, GraduationCap, MessageSquareText, ShieldCheck, Sparkles } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
@@ -21,7 +23,7 @@ export default function Landing() {
     <div className="min-h-screen bg-[#080B12] text-slate-100">
       <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <Logo />
-        <Link to="/sign-in" className="nx-btn-glow rounded-md px-4 py-2 text-sm" data-testid="landing-signin-button">Sign in</Link>
+        <Link href="/sign-in" className="nx-btn-glow rounded-md px-4 py-2 text-sm" data-testid="landing-signin-button">Sign in</Link>
       </header>
 
       <section className="relative overflow-hidden">
@@ -39,7 +41,7 @@ export default function Landing() {
               then answers — and tells you plainly when the evidence isn't there.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/sign-in" className="inline-flex items-center gap-2 rounded-md bg-cyan-300 px-5 py-3 text-sm font-semibold text-[#080B12] transition-colors hover:bg-cyan-200" data-testid="landing-get-started-button">
+              <Link href="/sign-in" className="inline-flex items-center gap-2 rounded-md bg-cyan-300 px-5 py-3 text-sm font-semibold text-[#080B12] transition-colors hover:bg-cyan-200" data-testid="landing-get-started-button">
                 Continue with Google <ArrowRight className="h-4 w-4" />
               </Link>
               <a href="#capabilities" className="rounded-md border border-[#202C3D] px-5 py-3 text-sm text-slate-300 transition-colors hover:border-[#334155]" data-testid="landing-learn-more-link">Explore capabilities</a>

@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { Activity, Boxes, FileText, MessageSquareText, Upload, Coins, ArrowUpRight } from "lucide-react";
-import { useUser } from "@clerk/react";
+import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Page, PageHeader } from "@/components/common/PageHeader";
 import { EmptyState, ErrorState, Panel, StatCard } from "@/components/common/Blocks";
@@ -20,8 +22,8 @@ export default function Overview() {
       <PageHeader eyebrow="Overview" title={`Welcome back${user?.firstName ? `, ${user.firstName}` : ""}`}
         description="A live view of your knowledge base. Every number below is computed from your workspace data."
         actions={<>
-          <Link to="/app/knowledge?upload=1" className="inline-flex items-center gap-2 rounded-md border border-[#202C3D] px-4 py-2 text-sm text-slate-200 hover:border-[#334155]" data-testid="quick-upload-button"><Upload className="h-4 w-4" />Upload document</Link>
-          <Link to="/app/chat" className="nx-btn-glow inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm" data-testid="quick-research-button"><MessageSquareText className="h-4 w-4" />Start research session</Link>
+          <Link href="/app/knowledge?upload=1" className="inline-flex items-center gap-2 rounded-md border border-[#202C3D] px-4 py-2 text-sm text-slate-200 hover:border-[#334155]" data-testid="quick-upload-button"><Upload className="h-4 w-4" />Upload document</Link>
+          <Link href="/app/chat" className="nx-btn-glow inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm" data-testid="quick-research-button"><MessageSquareText className="h-4 w-4" />Start research session</Link>
         </>} />
       {error && <ErrorState message={error} onRetry={reload} />}
       {loading ? <StatSkeleton /> : data && (
@@ -35,7 +37,7 @@ export default function Overview() {
           {data.documents === 0 ? (
             <EmptyState icon={Upload} title="Your knowledge base is empty" testId="overview-empty-state"
               description="Upload a PDF to build your private knowledge base. NEXUS will extract, chunk and embed it so you can ask grounded questions."
-              action={<Link to="/app/knowledge?upload=1" className="nx-btn-glow rounded-md px-4 py-2 text-sm" data-testid="overview-empty-upload-button">Upload your first PDF</Link>} />
+              action={<Link href="/app/knowledge?upload=1" className="nx-btn-glow rounded-md px-4 py-2 text-sm" data-testid="overview-empty-upload-button">Upload your first PDF</Link>} />
           ) : (
             <div className="grid gap-6 lg:grid-cols-3">
               <RecentDocs docs={data.recent_documents} />
@@ -52,11 +54,11 @@ export default function Overview() {
 const StatSkeleton = () => <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32 bg-[#0E1420]" />)}</div>;
 
 const RecentDocs = ({ docs }) => (
-  <Panel title="Recent uploads" testId="recent-uploads-panel" actions={<Link to="/app/knowledge" className="text-xs text-cyan-300 hover:underline" data-testid="view-all-documents-link">View all</Link>}>
+  <Panel title="Recent uploads" testId="recent-uploads-panel" actions={<Link href="/app/knowledge" className="text-xs text-cyan-300 hover:underline" data-testid="view-all-documents-link">View all</Link>}>
     <ul className="space-y-3">
       {docs.map((d) => (
         <li key={d.id}>
-          <Link to={`/app/knowledge/${d.id}`} className="group flex items-center gap-3" data-testid={`recent-doc-${d.id}`}>
+          <Link href={`/app/knowledge/${d.id}`} className="group flex items-center gap-3" data-testid={`recent-doc-${d.id}`}>
             <FileText className="h-4 w-4 shrink-0 text-slate-500" />
             <span className="min-w-0 flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{d.filename}</span>
             <StatusPill status={d.status} stage={d.stage} progress={d.progress} />
@@ -73,7 +75,7 @@ const RecentConversations = ({ convs }) => (
       <ul className="space-y-3">
         {convs.map((c) => (
           <li key={c.id}>
-            <Link to={`/app/chat/${c.id}`} className="group flex items-center gap-3" data-testid={`recent-conversation-${c.id}`}>
+            <Link href={`/app/chat/${c.id}`} className="group flex items-center gap-3" data-testid={`recent-conversation-${c.id}`}>
               <MessageSquareText className="h-4 w-4 shrink-0 text-slate-500" />
               <span className="min-w-0 flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{c.title}</span>
               <span className="font-mono text-[11px] text-slate-500">{timeAgo(c.updated_at)}</span>

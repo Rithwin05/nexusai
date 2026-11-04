@@ -1,5 +1,7 @@
+"use client";
+
 import { createContext, useContext, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useFetch } from "@/lib/api";
 import { Sidebar } from "./Sidebar";
@@ -9,12 +11,12 @@ import { CommandMenu } from "./CommandMenu";
 const WorkspaceCtx = createContext(null);
 export const useWorkspace = () => useContext(WorkspaceCtx);
 
-export default function AppShell() {
+export default function AppShell({ children }) {
   const ws = useFetch("/workspace");
   const docs = useFetch("/documents");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
-  const { pathname } = useLocation();
+  const pathname = usePathname();
 
   return (
     <WorkspaceCtx.Provider value={{ workspace: ws.data, reloadWorkspace: ws.reload, documents: docs.data || [], reloadDocuments: docs.reload }}>
@@ -28,8 +30,8 @@ export default function AppShell() {
         </Sheet>
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar workspace={ws.data} onMenu={() => setMobileOpen(true)} onCommand={() => setCmdOpen(true)} />
-          <main key={pathname.split("/")[2] || "overview"} className="relative flex-1 overflow-y-auto" data-testid="main-content">
-            <Outlet />
+          <main key={pathname?.split("/")[2] || "overview"} className="relative flex-1 overflow-y-auto" data-testid="main-content">
+            {children}
           </main>
         </div>
         <CommandMenu open={cmdOpen} setOpen={setCmdOpen} documents={docs.data || []} />

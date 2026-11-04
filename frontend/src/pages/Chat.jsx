@@ -1,6 +1,8 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { History, MessageSquareText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -22,21 +24,21 @@ const suggestionsFor = (docs) => {
 };
 
 export default function Chat() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [params, setParams] = useSearchParams();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const api = useApi();
   const { documents } = useWorkspace();
   const convs = useFetch("/conversations");
-  const [input, setInput] = useState(params.get("q") || "");
+  const [input, setInput] = useState(searchParams?.get("q") || "");
   const [scope, setScope] = useState("all");
   const [historyOpen, setHistoryOpen] = useState(false);
   const citation = useCitation();
   const bottom = useRef(null);
-  const onCreated = useCallback((cid) => navigate(`/app/chat/${cid}`, { replace: true }), [navigate]);
+  const onCreated = useCallback((cid) => router.replace(`/app/chat/${cid}`), [router]);
   const { messages, loading, streaming, send, stop } = useChatStream(id, { onCreated, onFinished: convs.reload });
 
-  useEffect(() => { if (params.get("q")) setParams({}, { replace: true }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages]);
 
   const submit = (text = input) => {
@@ -49,10 +51,10 @@ export default function Chat() {
     if (lastUser) send(lastUser.content, scope === "all" ? null : [scope], true);
   };
   const remove = async (c) => {
-    try { await api.delete(`/conversations/${c.id}`); convs.reload(); if (c.id === id) navigate("/app/chat"); toast.success("Conversation deleted"); }
+    try { await api.delete(`/conversations/${c.id}`); convs.reload(); if (c.id === id) router.push("/app/chat"); toast.success("Conversation deleted"); }
     catch (e) { toast.error(errMsg(e)); }
   };
-  const list = <ConversationList conversations={convs.data || []} activeId={id} onNew={() => { navigate("/app/chat"); setHistoryOpen(false); }} onDelete={remove} />;
+  const list = <ConversationList conversations={convs.data || []} activeId={id} onNew={() => { router.push("/app/chat"); setHistoryOpen(false); }} onDelete={remove} />;
   const indexedCount = documents.filter((d) => d.status === "indexed").length;
 
   return (
@@ -97,7 +99,7 @@ const ChatEmpty = ({ suggestions, onPick, indexedCount }) => (
     </p>
     {indexedCount === 0 ? (
       <div className="mt-8 rounded-lg border border-dashed border-[#202C3D] p-5 text-sm text-slate-400">
-        No indexed documents yet. <Link to="/app/knowledge?upload=1" className="text-cyan-300 hover:underline" data-testid="chat-upload-link">Upload a PDF</Link> to start a grounded research session.
+        No indexed documents yet. <Link href="/app/knowledge?upload=1" className="text-cyan-300 hover:underline" data-testid="chat-upload-link">Upload a PDF</Link> to start a grounded research session.
       </div>
     ) : (
       <div className="mt-8 grid gap-2 sm:grid-cols-2">

@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { MessageSquarePlus, Trash2 } from "lucide-react";
 import { timeAgo } from "@/lib/format";
 
@@ -14,7 +16,7 @@ export const ConversationList = ({ conversations, activeId, onNew, onDelete }) =
       {conversations.length === 0 && <p className="px-2 text-xs text-slate-500">No conversations yet.</p>}
       {conversations.map((c) => (
         <div key={c.id} className={`group flex items-center rounded-md ${c.id === activeId ? "bg-[#111B2A]" : "hover:bg-[#0E1420]"}`}>
-          <Link to={`/app/chat/${c.id}`} className="min-w-0 flex-1 px-3 py-2" data-testid={`conversation-item-${c.id}`}>
+          <Link href={`/app/chat/${c.id}`} className="min-w-0 flex-1 px-3 py-2" data-testid={`conversation-item-${c.id}`}>
             <div className={`truncate text-[13px] ${c.id === activeId ? "text-slate-100" : "text-slate-400"}`}>{c.title}</div>
             <div className="font-mono text-[10px] text-slate-600">{timeAgo(c.updated_at)}</div>
           </Link>

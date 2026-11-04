@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { GraduationCap, MessageSquareText, Target } from "lucide-react";
 import { Page, PageHeader } from "@/components/common/PageHeader";
 import { DocumentSelect } from "@/components/common/DocumentSelect";
@@ -16,7 +18,7 @@ const List = ({ items, cite }) => (
 
 export default function Research() {
   const { documents } = useWorkspace();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [doc, setDoc] = useState("");
   const { insight, running, error, run } = useInsight("research", doc, "/research/analyze");
   const cite = useCitation();
@@ -81,7 +83,7 @@ export default function Research() {
             <ul className="divide-y divide-[#202C3D]">{(r.follow_up_questions || []).map((q, i) => (
               <li key={i} className="flex items-center gap-3 py-2.5">
                 <span className="font-mono text-xs text-slate-600">Q{i + 1}</span><span className="flex-1">{q}</span>
-                <button onClick={() => navigate(`/app/chat?q=${encodeURIComponent(q)}`)} data-testid={`research-ask-question-${i}`}
+                <button onClick={() => router.push(`/app/chat?q=${encodeURIComponent(q)}`)} data-testid={`research-ask-question-${i}`}
                   className="inline-flex shrink-0 items-center gap-1.5 rounded border border-[#202C3D] px-2.5 py-1 text-xs text-slate-400 hover:border-cyan-700/60 hover:text-cyan-300">
                   <MessageSquareText className="h-3.5 w-3.5" />Ask in chat
                 </button>

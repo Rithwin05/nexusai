@@ -1,5 +1,7 @@
+"use client";
+
 import { Menu, Search } from "lucide-react";
-import { UserButton } from "@clerk/react";
+import { UserButton } from "@clerk/nextjs";
 
 export const Topbar = ({ workspace, onMenu, onCommand }) => (
   <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-[#202C3D] bg-[#080B12]/90 px-4 backdrop-blur-xl sm:px-6" data-testid="topbar">

@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { Eye, RefreshCw, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { StatusPill } from "@/components/common/StatusPill";
@@ -18,7 +20,7 @@ export const DocumentTable = ({ docs, onDelete, onReindex }) => (
           return (
             <tr key={d.id} className="bg-[#0E1420] transition-colors hover:bg-[#111B2A]/60" data-testid={`document-row-${d.id}`}>
               <td className="max-w-[280px] px-4 py-3">
-                <Link to={`/app/knowledge/${d.id}`} className="block truncate text-slate-200 hover:text-cyan-300" data-testid={`document-link-${d.id}`}>{d.filename}</Link>
+                <Link href={`/app/knowledge/${d.id}`} className="block truncate text-slate-200 hover:text-cyan-300" data-testid={`document-link-${d.id}`}>{d.filename}</Link>
                 {d.error && <div className="mt-0.5 truncate text-xs text-rose-300" title={d.error} data-testid={`document-error-${d.id}`}>{d.error}</div>}
               </td>
               <td className="px-4 py-3"><StatusPill status={d.status} stage={d.stage} progress={d.progress} testId={`document-status-${d.id}`} /></td>
@@ -29,7 +31,7 @@ export const DocumentTable = ({ docs, onDelete, onReindex }) => (
               <td className="px-4 py-3 font-mono text-slate-400">{d.status === "indexed" ? formatMs(d.processing_ms) : "—"}</td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-1">
-                  <Link to={`/app/knowledge/${d.id}`} className="rounded p-1.5 text-slate-500 hover:bg-[#111B2A] hover:text-slate-100" aria-label="Open" data-testid={`document-open-${d.id}`}><Eye className="h-4 w-4" /></Link>
+                  <Link href={`/app/knowledge/${d.id}`} className="rounded p-1.5 text-slate-500 hover:bg-[#111B2A] hover:text-slate-100" aria-label="Open" data-testid={`document-open-${d.id}`}><Eye className="h-4 w-4" /></Link>
                   <IconBtn aria-label="Re-index" disabled={busy} onClick={() => onReindex(d)} data-testid={`document-reindex-${d.id}`}><RefreshCw className="h-4 w-4" /></IconBtn>
                   <AlertDialog>
                     <AlertDialogTrigger asChild><IconBtn aria-label="Delete" disabled={busy} data-testid={`document-delete-${d.id}`}><Trash2 className="h-4 w-4" /></IconBtn></AlertDialogTrigger>

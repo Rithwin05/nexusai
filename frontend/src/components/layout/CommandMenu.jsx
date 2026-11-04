@@ -1,11 +1,13 @@
+"use client";
+
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { FileText, Upload, MessageSquarePlus } from "lucide-react";
 import { NAV } from "./nav";
 
 export const CommandMenu = ({ open, setOpen, documents = [] }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setOpen((o) => !o); }
@@ -13,7 +15,7 @@ export const CommandMenu = ({ open, setOpen, documents = [] }) => {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setOpen]);
-  const go = (to) => { setOpen(false); navigate(to); };
+  const go = (to) => { setOpen(false); router.push(to); };
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Jump to a page or document…" data-testid="command-input" />

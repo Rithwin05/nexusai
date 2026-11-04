@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { ExternalLink, FileText } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { pages } from "@/lib/format";
@@ -14,7 +16,7 @@ export const CitationMeta = ({ c }) => (
 );
 
 export const CitationSheet = ({ citation, onClose }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <Sheet open={Boolean(citation)} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full border-[#202C3D] bg-[#0B111C] sm:max-w-lg overflow-y-auto" data-testid="citation-panel">
@@ -31,7 +33,7 @@ export const CitationSheet = ({ citation, onClose }) => {
               {citation.text}
             </div>
             <button data-testid="citation-open-document-button"
-              onClick={() => navigate(`/app/knowledge/${citation.document_id}?chunk=${citation.chunk_id}`)}
+              onClick={() => router.push(`/app/knowledge/${citation.document_id}?chunk=${citation.chunk_id}`)}
               className="nx-btn-glow mt-5 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm">
               <ExternalLink className="h-4 w-4" /> Open in document & highlight
             </button>

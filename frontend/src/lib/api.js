@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth } from "@clerk/nextjs";
 
-export const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+export const API = process.env.NEXT_PUBLIC_BACKEND_URL
+  ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`
+  : (process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : "/api");
 
 export const errMsg = (e) => {
   const d = e?.response?.data?.detail;
@@ -18,15 +20,15 @@ export function useApi() {
   return useMemo(() => {
     const client = axios.create({ baseURL: API });
     client.interceptors.request.use(async (cfg) => {
-      const t = await tokenRef.current();
+      const t = await tokenRef.current?.();
       if (t) cfg.headers.Authorization = `Bearer ${t}`;
       return cfg;
     });
     client.stream = async (path, body, onEvent, signal) => {
-      const t = await tokenRef.current();
+      const t = await tokenRef.current?.();
       const res = await fetch(`${API}${path}`, {
         method: "POST", signal, body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` },
+        headers: { "Content-Type": "application/json", ...(t ? { Authorization: `Bearer ${t}` } : {}) },
       });
       if (!res.ok) {
         let detail = `Request failed (${res.status})`;

@@ -1,5 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Search as SearchIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -11,13 +14,14 @@ import { useApi, useFetch } from "@/lib/api";
 import { formatBytes, formatMs, pages } from "@/lib/format";
 
 export default function DocumentDetail() {
-  const { id } = useParams();
-  const [params] = useSearchParams();
-  const focus = params.get("chunk");
-  const doc = useFetch(`/documents/${id}`, { interval: 0 });
+  const params = useParams();
+  const id = params?.id;
+  const searchParams = useSearchParams();
+  const focus = searchParams?.get("chunk");
+  const doc = useFetch(id ? `/documents/${id}` : null, { interval: 0 });
   const [q, setQ] = useState("");
   const [limit, setLimit] = useState(200);
-  const chunks = useFetch(`/documents/${id}/chunks?limit=${limit}${q ? `&q=${encodeURIComponent(q)}` : ""}`);
+  const chunks = useFetch(id ? `/documents/${id}/chunks?limit=${limit}${q ? `&q=${encodeURIComponent(q)}` : ""}` : null);
   const [tab, setTab] = useState("chunks");
   const focused = chunks.data?.chunks.find((c) => c.id === focus);
 
@@ -33,7 +37,7 @@ export default function DocumentDetail() {
 
   return (
     <Page>
-      <Link to="/app/knowledge" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200" data-testid="back-to-knowledge-link"><ArrowLeft className="h-3.5 w-3.5" />Knowledge Base</Link>
+      <Link href="/app/knowledge" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200" data-testid="back-to-knowledge-link"><ArrowLeft className="h-3.5 w-3.5" />Knowledge Base</Link>
       <PageHeader eyebrow="Document" title={d.filename} description={d.metadata?.title && d.metadata.title !== d.filename ? d.metadata.title : undefined}
         actions={<StatusPill status={d.status} stage={d.stage} progress={d.progress} testId="document-detail-status" />} />
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-[#202C3D] bg-[#202C3D] sm:grid-cols-3 lg:grid-cols-6" data-testid="document-meta">
@@ -93,7 +97,7 @@ const PdfViewer = ({ id, page, active }) => {
   const [url, setUrl] = useState(null);
   const [err, setErr] = useState(null);
   useEffect(() => {
-    if (!active || url) return undefined;
+    if (!active || url || !id) return undefined;
     let u;
     api.blob(`/documents/${id}/file`).then((b) => { u = URL.createObjectURL(b); setUrl(u); }).catch(() => setErr("Could not load the original PDF."));
     return undefined;

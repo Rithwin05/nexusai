@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { ExternalLink, Loader2, Search as SearchIcon } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,7 +23,7 @@ const Highlight = ({ text, query }) => {
 
 export default function Search() {
   const api = useApi();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { documents } = useWorkspace();
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("hybrid");
@@ -97,7 +99,7 @@ export default function Search() {
                   <div className="truncate font-display text-sm font-medium text-slate-100">{r.document_name}</div>
                   <div className="mt-2"><CitationMeta c={r} /></div>
                 </div>
-                <button onClick={() => navigate(`/app/knowledge/${r.document_id}?chunk=${r.chunk_id}`)} data-testid={`search-result-open-${r.rank}`}
+                <button onClick={() => router.push(`/app/knowledge/${r.document_id}?chunk=${r.chunk_id}`)} data-testid={`search-result-open-${r.rank}`}
                   className="inline-flex items-center gap-1.5 rounded-md border border-[#202C3D] px-3 py-1.5 text-xs text-slate-300 hover:border-cyan-700/60 hover:text-cyan-300">
                   <ExternalLink className="h-3.5 w-3.5" />Open source
                 </button>
