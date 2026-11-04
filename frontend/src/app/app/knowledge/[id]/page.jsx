@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import DocumentDetail from "@/pages/DocumentDetail";
+import DocumentDetail from "@/views/DocumentDetail";
 
 export default function DocumentDetailRoute() {
   return (

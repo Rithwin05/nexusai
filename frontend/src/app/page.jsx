@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import Landing from "@/pages/Landing";
+import Landing from "@/views/Landing";
 
 export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();

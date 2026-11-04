@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import KnowledgeBase from "@/pages/KnowledgeBase";
+import KnowledgeBase from "@/views/KnowledgeBase";
 
 export default function KnowledgeBaseRoute() {
   return (

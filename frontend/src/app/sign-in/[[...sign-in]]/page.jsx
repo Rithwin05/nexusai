@@ -1,7 +1,7 @@
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
-import AuthPage from "@/pages/AuthPage";
+import AuthPage from "@/views/AuthPage";
 
 export default function SignInPage() {
   return (

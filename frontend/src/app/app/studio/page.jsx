@@ -1,6 +1,6 @@
 "use client";
 
-import Studio from "@/pages/Studio";
+import Studio from "@/views/Studio";
 
 export default function StudioRoute() {
   return <Studio />;

@@ -1,6 +1,6 @@
 "use client";
 
-import Overview from "@/pages/Overview";
+import Overview from "@/views/Overview";
 
 export default function OverviewRoute() {
   return <Overview />;
