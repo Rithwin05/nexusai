@@ -110,7 +110,7 @@ async def reindex(doc_id: str, ws: dict = Depends(current_workspace)):
 @router.delete("/{doc_id}")
 async def delete_document(doc_id: str, ws: dict = Depends(current_workspace)):
     doc = await _get_doc(ws, doc_id)
-    if doc["status"] == "processing":
+    if doc["status"] in ("processing", "queued"):
         raise HTTPException(409, "Wait for processing to finish before deleting.")
     scope = {"workspace_id": ws["id"], "document_id": doc_id}
     removed = (await db.chunks.delete_many(scope)).deleted_count

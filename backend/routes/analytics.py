@@ -1,3 +1,4 @@
+import math
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
@@ -10,7 +11,7 @@ router = APIRouter(prefix="/api", tags=["analytics"])
 
 def _pct(values: list[float], p: float):
     values = sorted(v for v in values if v is not None)
-    return round(values[int(p * (len(values) - 1))], 1) if values else None
+    return round(values[max(0, math.ceil(p * len(values)) - 1)], 1) if values else None
 
 
 @router.get("/overview")

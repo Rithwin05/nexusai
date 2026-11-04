@@ -29,7 +29,7 @@ export const ErrorState = ({ message, onRetry }) => (
 );
 
 export const Panel = ({ title, actions, children, className = "", testId }) => (
-  <section className={`nx-card ${className}`} data-testid={testId}>
+  <section className={`nx-card min-w-0 ${className}`} data-testid={testId}>
     {title && (
       <div className="flex items-center justify-between border-b border-[#202C3D] px-5 py-3.5">
         <h3 className="font-display text-sm font-medium text-slate-200">{title}</h3>

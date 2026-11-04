@@ -32,7 +32,7 @@ export const DocumentTable = ({ docs, onDelete, onReindex }) => (
                   <Link to={`/app/knowledge/${d.id}`} className="rounded p-1.5 text-slate-500 hover:bg-[#111B2A] hover:text-slate-100" aria-label="Open" data-testid={`document-open-${d.id}`}><Eye className="h-4 w-4" /></Link>
                   <IconBtn aria-label="Re-index" disabled={busy} onClick={() => onReindex(d)} data-testid={`document-reindex-${d.id}`}><RefreshCw className="h-4 w-4" /></IconBtn>
                   <AlertDialog>
-                    <AlertDialogTrigger asChild><IconBtn aria-label="Delete" disabled={d.status === "processing"} data-testid={`document-delete-${d.id}`}><Trash2 className="h-4 w-4" /></IconBtn></AlertDialogTrigger>
+                    <AlertDialogTrigger asChild><IconBtn aria-label="Delete" disabled={busy} data-testid={`document-delete-${d.id}`}><Trash2 className="h-4 w-4" /></IconBtn></AlertDialogTrigger>
                     <AlertDialogContent className="border-[#202C3D] bg-[#0E1420]">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete “{d.filename}”?</AlertDialogTitle>

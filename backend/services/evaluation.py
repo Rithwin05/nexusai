@@ -92,7 +92,7 @@ async def run(ws: dict, mode: str, top_k: int, threshold: float, label: str | No
     n = len(items)
     metrics = {"recall_at_k": round(sum(hits) / n, 4), "precision_at_k": round(sum(precs) / n, 4), "mrr": round(sum(rrs) / n, 4),
                "context_coverage": round(sum(covs) / len(covs), 4) if covs else None,
-               "avg_latency_ms": round(sum(lats) / n, 1), "p95_latency_ms": round(sorted(lats)[int(0.95 * (n - 1))], 1)}
+               "avg_latency_ms": round(sum(lats) / n, 1), "p95_latency_ms": round(sorted(lats)[max(0, -(-95 * n // 100) - 1)], 1)}
     doc = {"id": str(uuid.uuid4()), "workspace_id": ws["id"], "label": label or f"{mode} · k={top_k} · t={threshold}",
            "config": {"mode": mode, "top_k": top_k, "threshold": threshold}, "metrics": metrics, "questions": n,
            "results": per, "embed_tokens": embed_tokens, "duration_ms": round((time.perf_counter() - t0) * 1000), "created_at": now_iso()}

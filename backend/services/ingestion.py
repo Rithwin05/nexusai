@@ -52,6 +52,8 @@ async def process(doc: dict, settings: dict, data: bytes | None = None) -> None:
         await _status(doc_id, stage="storing", progress=95)
         rows = [{"id": str(uuid.uuid4()), "workspace_id": ws_id, "document_id": doc_id, **c,
                  "embedding": v, "embedding_model": EMBEDDING_MODEL, "created_at": now_iso()} for c, v in zip(chunks, vectors)]
+        if not await db.documents.find_one({"id": doc_id}, {"_id": 1}):
+            return  # document was deleted while processing
         for i in range(0, len(rows), 500):
             await db.chunks.insert_many(rows[i:i + 500])
         ms = round((time.perf_counter() - t0) * 1000)

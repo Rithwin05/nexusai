@@ -74,7 +74,8 @@ async def answer_stream(ws: dict, conversation: dict, question: str, document_id
     msg = {"id": str(uuid.uuid4()), "conversation_id": conv_id, "workspace_id": ws_id, "role": "assistant",
            "content": answer, "citations": citations, "metrics": metrics, "feedback": None, "created_at": now_iso()}
     await db.messages.insert_one(dict(msg))
-    await db.conversations.update_one({"id": conv_id}, {"$set": {"updated_at": now_iso()}, "$inc": {"message_count": 2}})
+    count = await db.messages.count_documents({"conversation_id": conv_id})
+    await db.conversations.update_one({"id": conv_id}, {"$set": {"updated_at": now_iso(), "message_count": count}})
     await record_usage(ws_id, "chat", model=settings.get("llm_model"), **{k: metrics[k] for k in
                        ("retrieval_ms", "generation_ms", "total_ms", "input_tokens", "output_tokens", "embed_tokens")},
                        insufficient=not grounded)

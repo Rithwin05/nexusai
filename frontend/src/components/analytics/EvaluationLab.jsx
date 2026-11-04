@@ -13,10 +13,10 @@ import { formatMs, pct, timeAgo } from "@/lib/format";
 
 export const EvaluationLab = () => {
   const api = useApi();
-  const { documents } = useWorkspace();
+  const { documents, workspace } = useWorkspace();
   const items = useFetch("/evaluation/items");
   const runs = useFetch("/evaluation/runs");
-  const [cfg, setCfg] = useState({ mode: "hybrid", top_k: "5", threshold: "0" });
+  const [cfg, setCfg] = useState({ mode: workspace?.settings?.mode || "hybrid", top_k: "5", threshold: "0" });
   const [busy, setBusy] = useState(null);
   const [manual, setManual] = useState({ question: "", document_id: "", keywords: "" });
 

@@ -27,6 +27,7 @@ export default function Settings() {
   if (!s) return <Page><Loader2 className="h-5 w-5 animate-spin text-slate-500" /></Page>;
   const set = (k) => (v) => setS({ ...s, [k]: v });
   const sys = workspace.system;
+  const overlapInvalid = s.chunk_overlap >= Math.floor(s.chunk_size / 2);
 
   const save = async () => {
     setSaving(true);
@@ -37,7 +38,7 @@ export default function Settings() {
   return (
     <Page>
       <PageHeader eyebrow="Settings" title="Workspace & retrieval configuration"
-        actions={<button onClick={save} disabled={saving} className="nx-btn-glow inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm" data-testid="settings-save-button">
+        actions={<button onClick={save} disabled={saving || overlapInvalid} className="nx-btn-glow inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm disabled:opacity-40" data-testid="settings-save-button">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Save changes</button>} />
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-6">
@@ -67,7 +68,8 @@ export default function Settings() {
           <Panel title="Chunking (applies to new uploads and re-indexing)">
             <div className="space-y-7">
               <Field label="Chunk size (characters)" value={s.chunk_size}><Slider value={[s.chunk_size]} min={300} max={4000} step={50} onValueChange={([v]) => set("chunk_size")(v)} data-testid="settings-chunk-size-slider" /></Field>
-              <Field label="Chunk overlap (characters)" value={s.chunk_overlap} hint="Must be less than half the chunk size."><Slider value={[s.chunk_overlap]} min={0} max={1000} step={25} onValueChange={([v]) => set("chunk_overlap")(v)} data-testid="settings-chunk-overlap-slider" /></Field>
+              <Field label="Chunk overlap (characters)" value={s.chunk_overlap} hint="Must be less than half the chunk size."><Slider value={[s.chunk_overlap]} min={0} max={1000} step={25} onValueChange={([v]) => set("chunk_overlap")(v)} data-testid="settings-chunk-overlap-slider" />
+                {overlapInvalid && <p className="mt-2 text-xs text-rose-300" data-testid="settings-overlap-error">Overlap must be less than {Math.floor(s.chunk_size / 2)} characters (half the chunk size).</p>}</Field>
             </div>
           </Panel>
         </div>

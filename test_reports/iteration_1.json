@@ -1,0 +1,53 @@
+{
+  "summary": "Full backend + frontend E2E of NEXUS AI on the public preview URL. Backend: 45/45 pytest pass (new regression suite tests/test_nexus_api.py covers 401 auth, two-user isolation, upload 415/409/413, ingestion, documents, search modes, chat SSE, regenerate, feedback, studio, eval, settings, plus the existing test_core/test_pipeline). Frontend: Clerk ticket login, refresh keeps the session, sign-out, protected redirect, Overview, KB (upload validation messages, failed-doc error row, search and status filters, detail chunk inspector, PDF tab, metadata, delete dialog), Chat (streaming, [S#] badges, citation panel, open-and-highlight, insufficient-evidence badge, copy, regenerate, feedback, history, new and delete conversation, suggested questions), Search (keyword results plus error banner for semantic/hybrid), Studio (summary, sentiment doc+text, compare disabled, explain grounded vs general), Research (cached analysis, regenerate ~54s, gap matrix evidence opens panel, Ask in chat prefills), Analytics + Eval Lab (stats, charts, ops table, manual and generated questions, keyword benchmark, history and chart, metric notes), Settings (save persists, overlap validation), Ctrl+K and topbar command launcher, mobile 390px menu. All core flows work. IMPORTANT ENV CHANGE: around 19:25 UTC (after a container restart) OpenAI embeddings started succeeding. Hybrid/semantic search returns 200 with embed_tokens>0, and a new TEST upload was really indexed. So the 'no credits' premise no longer holds.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/chat/stream (regenerate=true)", "issue": "Regenerate blindly deletes the last 2 messages. If the last turn failed (an error SSE event, so only the user message was saved), regenerate deletes that orphan user message AND the previous successful assistant answer. Reproduced: [user Q1, assistant A1, user Q2(failed)] -> regenerate -> [user Q1, user Q2, assistant A2]. message_count=2 while 3 messages exist. Failed turns also leave orphan user messages without incrementing message_count."},
+      {"endpoint": "GET /api/analytics", "issue": "_pct() uses values[int(p*(n-1))]. For small n this returns a low value, so p95 < avg. Examples: research avg 39.05s / p95 24.60s, explain avg 15.9s / p95 14.9s. Use the nearest-rank method (ceil(p*n)-1)."},
+      {"endpoint": "DELETE /api/documents/{id}", "issue": "Only status 'processing' is blocked. Deleting while 'queued' (or a reindex race) lets the background ingestion task keep running and insert_many chunks for a document that no longer exists. These orphan chunks are hidden by hydrate() but still counted in overview/analytics chunk counts and in the in-memory index. ingestion.process should check that the doc still exists before storing, or delete should also block 'queued'."},
+      {"endpoint": "sample_peft.pdf data", "issue": "sample_peft.pdf was indexed with the dev fake embedder. Now that real OpenAI embeddings work, semantic/hybrid queries compare real query vectors with fake chunk vectors (top similarity ~0.03-0.05). Hybrid search therefore returns 0 results above the 0.25 threshold. Re-index sample_peft.pdf with real embeddings and consider switching the workspace mode back to hybrid."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Search page", "issue": "When a semantic/hybrid search fails (503), the previous keyword results and the summary ('3 passages · keyword') stay rendered under the error banner and look like results for the new mode. Clear results on error.", "selector": "[data-testid='search-results']", "priority": "LOW"},
+      {"component": "CommandMenu", "issue": "Radix console error: 'DialogContent requires a DialogTitle' (accessibility). Add a VisuallyHidden DialogTitle.", "selector": "[data-testid='command-input']", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "Evaluation Lab", "issue": "Run-config mode defaults to 'hybrid' no matter what the workspace retrieval mode is. Initialise it from workspace settings.", "affected_selectors": ["[data-testid='eval-config-mode']"]}
+    ],
+    "design_issues": [
+      {"screen": "Overview (mobile 390px)", "issues": ["The 'View all' link and 'indexed' pill in the Recent uploads panel are clipped at the right edge"]},
+      {"screen": "Studio > Comparison", "issues": ["Compare button is disabled with no hint that two indexed documents are needed"]},
+      {"screen": "Settings", "issues": ["Invalid overlap (>= chunk_size/2) is only reported by a server toast after Save. No inline validation and Save stays enabled"]},
+      {"screen": "Sidebar system status", "issues": ["'Embedding key: set' only checks that the key exists, not that it works (misleading when the account has no credits)"]},
+      {"screen": "Knowledge Base table", "issues": ["Long failure error text is truncated with an ellipsis. Add a tooltip or title"]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_nexus_api.py", "/app/backend/tests/test_core.py", "/app/backend/tests/test_pipeline.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix chat regenerate so it deletes only the trailing assistant message and its matching user message (check roles), and handle orphan user messages from failed turns",
+    "Fix the p95 calculation in routes/analytics.py _pct (nearest-rank)",
+    "Prevent orphan chunks: block delete for 'queued' docs, or have ingestion check that the doc exists before insert_many",
+    "Re-index sample_peft.pdf with real OpenAI embeddings (they now work) and consider setting the workspace mode back to hybrid",
+    "Search page: clear stale results when a search errors",
+    "Eval Lab: default the run mode to the workspace mode",
+    "Add a DialogTitle to the CommandMenu dialog. Fix clipping in the mobile Recent uploads panel. Add a hint for the disabled Compare button. Add inline overlap validation in Settings"
+  ],
+  "critical_code_review_comments": [
+    "routes/chat.py regenerate: delete only when last[0].role=='assistant' and last[1].role=='user'. Otherwise delete just the trailing user message",
+    "services/chat.py: a user message is persisted before retrieval/generation. On error it stays and message_count is not incremented (count drifts)",
+    "routes/analytics.py _pct gives values below the average for small samples",
+    "services/ingestion.py: no cancellation or existence check, so a delete during the queued/processing race leaves orphan chunks",
+    "No delete endpoint for evaluation runs (test runs pile up in history)"
+  ],
+  "updated_files": ["/app/backend/tests/test_nexus_api.py"],
+  "success_rate": {"backend": "100% (45/45 pytest); 3 minor logic bugs found by code review and a probe", "frontend": "~95% (all requested flows work; minor UX/design issues only)"},
+  "test_credentials": "Used /app/memory/test_credentials.md as-is (nexus.tester+clerk_test@example.com via ticket; other.tester+clerk_test@example.com for isolation). No changes.",
+  "seed_data_creation": "None kept. Deleted my TEST_upload.pdf / TEST_ui_upload.pdf docs, my conversations (including e4c351e5 and d08c1e78) and my 5 eval items. The workspace name/top_k change was restored. Left behind: about 4 eval runs (keyword k5, hybrid k5, 2x semantic k5) because there is no delete endpoint. Main agent's conversation 90c86c97 and the 4 original eval items were kept.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run: cd /app/backend && python -m pytest -q tests -p no:cacheprovider (xdist -n 2 from pytest.ini). test_nexus_api.py is credit-aware: it accepts both the 'no remaining credits' 503/failed path and the real-indexing 200 path. UI login: generate a fresh ticket per browser session with python tests/clerk_token.py nexus.tester+clerk_test@example.com ticket (single-use) and open /sign-in?__clerk_ticket=... The PDF iframe renders blank in headless Chromium (blob URL); that is not an app bug. Workspace mode is 'keyword'.",
+  "rca of the issue": "Regenerate bug: routes/chat.py takes the last 2 messages by created_at and deletes them without checking roles. services/chat.py saves the user message before retrieval, and on an error SSE event no assistant message is saved. Repro: keyword-mode Q1 OK -> set mode=semantic (embedding error at the time) -> Q2 in same conversation errors -> set mode back -> regenerate Q2 -> A1 is deleted. Fix: delete by role (trailing assistant plus its user message) or by explicit message id."
+}

@@ -58,7 +58,7 @@ const RecentDocs = ({ docs }) => (
         <li key={d.id}>
           <Link to={`/app/knowledge/${d.id}`} className="group flex items-center gap-3" data-testid={`recent-doc-${d.id}`}>
             <FileText className="h-4 w-4 shrink-0 text-slate-500" />
-            <span className="flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{d.filename}</span>
+            <span className="min-w-0 flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{d.filename}</span>
             <StatusPill status={d.status} stage={d.stage} progress={d.progress} />
           </Link>
         </li>
@@ -75,7 +75,7 @@ const RecentConversations = ({ convs }) => (
           <li key={c.id}>
             <Link to={`/app/chat/${c.id}`} className="group flex items-center gap-3" data-testid={`recent-conversation-${c.id}`}>
               <MessageSquareText className="h-4 w-4 shrink-0 text-slate-500" />
-              <span className="flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{c.title}</span>
+              <span className="min-w-0 flex-1 truncate text-sm text-slate-300 group-hover:text-slate-100">{c.title}</span>
               <span className="font-mono text-[11px] text-slate-500">{timeAgo(c.updated_at)}</span>
               <ArrowUpRight className="h-3.5 w-3.5 text-slate-600 group-hover:text-cyan-300" />
             </Link>

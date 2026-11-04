@@ -18,6 +18,9 @@ export const CompareTab = ({ documents }) => {
         <DocumentSelect documents={documents} value={b} onChange={setB} placeholder="Document B" testId="compare-document-b-select" exclude={a} />
         <RunButton running={running} hasResult={Boolean(r)} disabled={!a || !b} onClick={() => run({ document_a: a, document_b: b })} label="Compare" testId="compare-generate-button" />
       </div>
+      {documents.filter((d) => d.status === "indexed").length < 2 && (
+        <p className="text-xs text-slate-500" data-testid="compare-needs-two-hint">Comparison needs at least two indexed documents.</p>
+      )}
       <InsightMeta insight={insight} />
       {error && <ErrorState message={error} />}
       {running && <Running text="Comparing both documents passage by passage…" />}

@@ -35,7 +35,7 @@ export default function Search() {
   const run = async (e) => {
     e?.preventDefault();
     if (!query.trim()) return;
-    setLoading(true); setError(null);
+    setLoading(true); setError(null); setRes(null);
     try {
       const r = await api.post("/search", { query, mode, top_k: Number(topK), threshold, document_ids: doc === "all" ? null : [doc] });
       setRes({ ...r.data, query });

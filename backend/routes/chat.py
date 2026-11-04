@@ -52,10 +52,13 @@ async def chat_stream(body: ChatIn, ws: dict = Depends(current_workspace)):
     if body.conversation_id:
         conv = await _conversation(ws, body.conversation_id)
         if body.regenerate:
-            last = await db.messages.find({"conversation_id": conv["id"]}, {"_id": 0}).sort("created_at", -1).limit(2).to_list(2)
-            for m in last:
-                await db.messages.delete_one({"id": m["id"]})
-            await db.conversations.update_one({"id": conv["id"]}, {"$inc": {"message_count": -len(last)}})
+            last_user = await db.messages.find_one({"conversation_id": conv["id"], "role": "user"}, {"_id": 0},
+                                                   sort=[("created_at", -1)])
+            if last_user:
+                await db.messages.delete_many({"conversation_id": conv["id"], "created_at": {"$gte": last_user["created_at"]}})
+            count = await db.messages.count_documents({"conversation_id": conv["id"]})
+            await db.conversations.update_one({"id": conv["id"]}, {"$set": {"message_count": count}})
+            conv["message_count"] = count
     else:
         conv = {"id": str(uuid.uuid4()), "workspace_id": ws["id"], "title": body.question[:70],
                 "message_count": 0, "created_at": now_iso(), "updated_at": now_iso()}
