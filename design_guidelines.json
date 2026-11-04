@@ -1,0 +1,93 @@
+{
+  "project_name": "NEXUS AI — The Intelligent Knowledge Operating System",
+  "tagline": "Your Knowledge. Connected.",
+  "archetype": "PREMIUM DARK FUTURISTIC SAAS / RESEARCH WORKSTATION",
+  "theme": "dark",
+  "typography": {
+    "heading_font": "Outfit, Plus Jakarta Sans, sans-serif",
+    "body_font": "Inter, system-ui, sans-serif",
+    "mono_font": "JetBrains Mono, Fira Code, monospace",
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold tracking-normal",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-sm sm:text-base leading-relaxed text-slate-300",
+      "small_label": "text-xs font-mono tracking-widest uppercase text-slate-400"
+    }
+  },
+  "colors": {
+    "background_deep": "#080B12",
+    "surface_dark": "#0E1420",
+    "surface_secondary": "#111B2A",
+    "border_subtle": "#202C3D",
+    "border_hover": "#334155",
+    "primary_cyan": "#67E8F9",
+    "secondary_electric_violet": "#A78BFA",
+    "success_green": "#34D399",
+    "warning_amber": "#FBBF24",
+    "danger_rose": "#F43F5E",
+    "text_primary": "#F1F5F9",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#64748B",
+    "accent_glow": "rgba(103, 232, 249, 0.15)"
+  },
+  "visual_enhancers": {
+    "card_style": "bg-[#0E1420] border border-[#202C3D] hover:border-[#334155] rounded-xl transition-all duration-200 shadow-xl shadow-black/40",
+    "glow_button": "bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400/60 shadow-[0_0_15px_rgba(103,232,249,0.15)] transition-all duration-200",
+    "glass_panel": "backdrop-blur-xl bg-[#080B12]/80 border border-[#202C3D]",
+    "badge_primary": "px-2.5 py-1 rounded-full text-xs font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30",
+    "badge_violet": "px-2.5 py-1 rounded-full text-xs font-mono bg-violet-500/10 text-violet-300 border border-violet-500/30",
+    "citation_tag": "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-700/50 hover:bg-cyan-900/80 cursor-pointer transition-colors"
+  },
+  "layout_and_navigation": {
+    "app_shell": "Flex layout with fixed left sidebar (width 260px desktop, collapsible), main scrollable content area, and top navbar (z-40, backdrop blur)",
+    "sidebar_items": [
+      {"name": "Overview", "icon": "LayoutDashboard", "route": "/"},
+      {"name": "Knowledge Base", "icon": "Database", "route": "/knowledge-base"},
+      {"name": "AI Research Chat", "icon": "MessageSquareCode", "route": "/chat"},
+      {"name": "Semantic Search", "icon": "Search", "route": "/search"},
+      {"name": "Intelligence Studio", "icon": "Sparkles", "route": "/studio"},
+      {"name": "Research Intelligence", "icon": "GraduationCap", "route": "/research"},
+      {"name": "Analytics & Evaluation", "icon": "BarChart3", "route": "/analytics"},
+      {"name": "Settings", "icon": "Sliders", "route": "/settings"}
+    ],
+    "top_nav": "Workspace dropdown selector, Command Launcher trigger (⌘K), Notifications bell, User Profile menu with avatar"
+  },
+  "key_features_design_specs": {
+    "landing_page": "Hero section with futuristic network visual, stats counter, interactive demo widget preview, feature grid, pricing tier cards, Google Sign-In button",
+    "knowledge_base": "Drag-and-drop PDF upload dropzone with progress bar, status pills (Processing, Indexed, Failed), searchable document table, document chunk inspector side-panel",
+    "research_chat": "Chat session sidebar, main message thread with streaming markdown, clickable source inline citations, citation details slide-over panel with similarity score & snippet context",
+    "semantic_search": "Mode toggle (Semantic, Keyword, Hybrid), query input with filter bar (threshold slider, top-k dropdown), ranked passage visual results with similarity score badges",
+    "intelligence_studio": "Tabbed workspace: Document Summarization, Sentiment Analysis, Document Comparison (side-by-side or split diff), Technical Concept Explainer",
+    "research_intelligence": "Structured academic analysis view: Objectives, Methodology, Findings, Limitations, Future Scope, Research Gap Finder matrix, Follow-up Questions generator",
+    "analytics_dashboard": "Recharts visual charts (Latency distribution, Token usage, Query throughput, RAG Evaluation Lab Recall@K & Precision@K benchmarking scores), system logs stream",
+    "settings": "RAG retriever parameters (Top-K slider, similarity score threshold, chunk size/overlap, LLM model selector, vector DB status)"
+  },
+  "testing_and_attributes": {
+    "data_testid_rule": "ALL interactive elements (buttons, inputs, menu items, tabs, citation links, modal close buttons) MUST have kebab-case role-based data-testid attributes.",
+    "examples": [
+      "data-testid=\"sidebar-nav-chat\"",
+      "data-testid=\"pdf-upload-dropzone\"",
+      "data-testid=\"chat-input-textarea\"",
+      "data-testid=\"chat-send-button\"",
+      "data-testid=\"citation-badge-1\"",
+      "data-testid=\"search-mode-hybrid-button\"",
+      "data-testid=\"evaluation-run-benchmark-button\""
+    ]
+  },
+  "media": {
+    "abstract_network": "https://images.unsplash.com/photo-1644088379091-d574269d422f?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "abstract_particles": "https://images.unsplash.com/photo-1758073519996-6d3c63b4922c?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "user_avatar_1": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "user_avatar_2": "https://images.unsplash.com/photo-1607746882042-944635dfe10e?crop=entropy&cs=srgb&fm=jpg&q=85"
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the dark futuristic aesthetic with deep midnight background #080B12 and elevated dark surfaces #0E1420.",
+    "Use JetBrains Mono or Fira Code for all data readouts, citation tags, token metrics, and JSON chunk displays.",
+    "Do NOT rely on transparent dropdown/header backgrounds—always supply solid dark background or heavy backdrop-blur (#080B12/80) to avoid overlaps.",
+    "Ensure every clickable button, input, tab, and citation tag carries a data-testid attribute.",
+    "Ensure toast notifications use sonner (/app/src/components/ui/sonner.js or similar).",
+    "Build clean empty states and skeleton loading cards for every view during async API fetching."
+  ]
+}
